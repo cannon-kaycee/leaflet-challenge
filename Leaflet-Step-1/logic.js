@@ -30,7 +30,19 @@ function createMap(earthquakes) {
     L.control.layers(baseMaps, overlayMaps, {
       collapsed: false
     }).addTo(map);
-  }
+  
+
+    function setIcon(mag){
+        iconSize: quakesItem.properties.mag*3
+    }
+  L.geoJSON(earthquakes, {
+      pointToLayer:function(feature,latlng) {
+          return L.circleMarker(latlng)
+      },
+      style: setIcon}).addTo(map);
+
+
+}
   
   
 
@@ -68,10 +80,9 @@ function createMap(earthquakes) {
      quakeMarkers.push(quakeMarker);
     }
   
-  function setIcon(mag){
-        iconSize: quakesItem.properties.mag*3
+ 
         
-  }
+  
 //   function setMag(mag) {
 //     if (quakesItem.properties.mag < 1)
 //     if (quakesItem.properties.mag >= 1) and (quakesItem.properties.mag < 2)
@@ -85,12 +96,8 @@ function createMap(earthquakes) {
     // Create a layer group that's made from the quake markers array, and pass it to the createMap function.
     createMap(L.layerGroup(quakeMarkers));
    
+
 }
-  L.geojson(Earthquakes, {
-      pointToLayer:function(feature,latlng) {
-          return L.circleMarker(latlng)
-      },
-      style: setIcon}).addTo(map);
   // Perform an API call to the Citi Bike API to get the station information. Call createMarkers when it completes.
   d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson").then(createMarkers);
 
