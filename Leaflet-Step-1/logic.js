@@ -18,8 +18,8 @@ function createMap(earthquakes) {
   
     // Create the map object with options.
     var map = L.map("map-id", {
-      center: [40.73, -74.0059],
-      zoom: 12,
+      // center: [40.73, -74.0059],
+      zoom: 40,
       layers: [streetMap, earthquakes]
       
     }).setView([0, 0], 1);
@@ -68,18 +68,39 @@ function createMarkers(response) {
       var quakeMarker = L.circleMarker([quakesItem.geometry.coordinates[1], quakesItem.geometry.coordinates[0]], {icon: icon})
         .bindPopup("<h3>" + "<h3><h3>Place: " + quakesItem.properties.place + "<h3><h3>Magnitude: " + quakesItem.properties.mag + "<h3><h3>Depth: " + quakesItem.geometry.coordinates[2] + "</h3>");
     
+
+
       // Add the marker to the quakeMarkers array.
      quakeMarkers.push(quakeMarker);
     }
 
     // Create a layer group that's made from the quake markers array, and pass it to the createMap function.
-    createMap(L.layerGroup(quakeMarkers));
+    createMap(L.layerGroup(quakeMarkers, getColor));
 }
 
   // Perform an API call to the Citi Bike API to get the station information. Call createMarkers when it completes.
-d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson").then(createMarkers);
+// d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson").then(createMarkers);
 
+  d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson").then(function(data) {}).addTo(earthquakes);
 
+function getColor(magnitude) {
+  if (magnitude > 5) {
+     return "#ea2c2c";
+  }
+  if (magnitude > 4) {
+    return "#ea822c";
+   }
+  if (magnitude > 3) {
+    return "#ee9c00";
+  }
+  if (magnitude > 2) {
+    return "#eecc00";
+   }
+   if (magnitude > 1) {
+    return "#d4ee00";
+   }
+  return "#98ee00";
+}
 
 
 
