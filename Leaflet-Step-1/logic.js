@@ -47,6 +47,7 @@ function createMap(earthquakes) {
 
 }
 
+
 function createMarkers(response) {
   
     // Pull the "quakes" property from response.
@@ -58,14 +59,17 @@ function createMarkers(response) {
     // Loop through the quakes array.
     for (var index = 0; index < quakes.length; index++) {
       var quakesItem = quakes[index];
-
+      
+      magnitude=[]
+      magnitude=quakesItem.properties.mag
       var icon = L.icon({
         iconSize: quakesItem.properties.mag,
         iconColor: "green",
         shape: "circle"});
-  
+      
+
       // For each quake, create a marker, and bind a popup with the quake's name.
-      var quakeMarker = L.circleMarker([quakesItem.geometry.coordinates[1], quakesItem.geometry.coordinates[0]], {icon: icon})
+      var quakeMarker = L.circleMarker([quakesItem.geometry.coordinates[1], quakesItem.geometry.coordinates[0]])
         .bindPopup("<h3>" + "<h3><h3>Place: " + quakesItem.properties.place + "<h3><h3>Magnitude: " + quakesItem.properties.mag + "<h3><h3>Depth: " + quakesItem.geometry.coordinates[2] + "</h3>");
     
 
@@ -75,71 +79,49 @@ function createMarkers(response) {
     }
 
     // Create a layer group that's made from the quake markers array, and pass it to the createMap function.
-    createMap(L.layerGroup(quakeMarkers, getColor));
+    createMap(L.layerGroup(quakeMarkers));
 }
 
   // Perform an API call to the Citi Bike API to get the station information. Call createMarkers when it completes.
 // d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson").then(createMarkers);
 
-  d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson").then(function(data) {}).addTo(earthquakes);
+
+d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson").then(createMarkers,{getColor},{getSize})
 
 function getColor(magnitude) {
   if (magnitude > 5) {
-     return "#ea2c2c";
+      return "#ea2c2c";
   }
   if (magnitude > 4) {
-    return "#ea822c";
-   }
+     return "#ea822c";
+     }
   if (magnitude > 3) {
     return "#ee9c00";
   }
   if (magnitude > 2) {
     return "#eecc00";
-   }
+    }
    if (magnitude > 1) {
-    return "#d4ee00";
-   }
-  return "#98ee00";
+  return "#d4ee00";
+  }
+ return "#98ee00";
 }
-
-
-
-
-//   I recommend the following strategy:
-// 1. Create a function that uses if-statements/switch statement that returns a string with the color code/name based on a depth integer value.
-// 2. Create a function that takes a magnitude argument (a number) and returns a 1 if the magnitude argument is 0 (this is so earthquakes with low magnitudes still appear), or returns the magnitude multiplied by an integer otherwise (maybe magnitude * 3)
-// 3. Create a function that simply returns an object/dictionary with properties such as opacity, fillColor (the value of this would be the return value of calling the function that returns a color name/code), a radius property (using the return value of calling the function that returns the magnitude), and any other property you want.
-// 4. To add it to the map, you can call L.geoJson as follows:
-// L.geoJson(data, {
-//     // We turn each feature into a circleMarker on the map.
-//     pointToLayer: function (feature, latlng) {
-//       return L.circleMarker(latlng);
-//     },
-//     // We set the style for each circleMarker using our styleInfo function.
-//     style: YOUR_FUNCTION_THAT_RETURNS_THE_DICTIONARY_GOES_HERE
-//   }).addTo(map);
-
-
-//     function setIcon(mag){
-//         iconSize: quakesItem.properties.mag*3
-//     }
-//   L.geoJSON(earthquakes, {
-//       pointToLayer:function(feature,latlng) {
-//           return L.circleMarker(latlng)
-//       },
-//       style: setIcon}).addTo(map);
-
-//   function setMag(mag) {
-//     if (quakesItem.properties.mag < 1)
-//     if (quakesItem.properties.mag >= 1) and (quakesItem.properties.mag < 2)
-//     if (quakesItem.properties.mag >= 2) and (quakesItem.properties.mag < 3)
-//     if (quakesItem.properties.mag >= 3) and (quakesItem.properties.mag < 4)
-//     if (quakesItem.properties.mag >= 4) and (quakesItem.properties.mag < 5)
-//     if (quakesItem.properties.mag >= 5) and (quakesItem.properties.mag < 6)
-//     if (quakesItem.properties.mag >= 6) and (quakesItem.properties.mag < 7)
-// }
-
-    // centerMarker.options.icon;
-    //     icon.options.iconSize = [quakesItem.properties.mag];
-    //     shape: "circle",
-    //     centerMarker.setIcon(icon);
+ 
+ function getSize(depth) {
+   if (75 <= depth > 100) {
+      return fillOpacity = 1;
+   }
+   if (50 <= depth > 75) {
+     return fillOpacity = 0.8;
+    }
+   if (25 <= depth > 50) {
+     return fillOpacity = 0.6;
+   }
+   if (10 <= depth > 25) {
+     return fillOpacity = 0.4;
+    }
+    if (10 <= depth > 0) {
+     return fillOpacity = 0.2;
+    }
+   return fillOpacity = 0.1;
+ }
